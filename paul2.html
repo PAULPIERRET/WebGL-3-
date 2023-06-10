@@ -79,7 +79,7 @@
 
             // 円柱を作成
             var cylinderGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 32);
-            var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+            var cylinder = new THREE.Mesh(cylinderGeometry, mat2);
             cylinder.position.set(1, 0, 0);
             scene.add(cylinder);
 
