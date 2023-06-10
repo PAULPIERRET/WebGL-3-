@@ -48,35 +48,26 @@
         scene.add(axisHelper);
 
         // テクスチャー読み込み
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load('baseball1.png');
-        const bump = textureLoader.load('baseball1_bump.png');
+        var textureLoader = new THREE.TextureLoader();
+        var texture = textureLoader.load("baseball1.png");
+        var mat = new THREE.MeshPhongMaterial({ map: texture });
 
         // 球を作成
-        var geometry = new THREE.SphereGeometry(0.5, 32, 128);
-        var mat = new THREE.MeshPhongMaterial(); // matの定義をここに移動
-        mat.map = texture;
-        mat.bumpMap = bump;
-        mat.bumpScale = 1.0;
+        var geometry = new THREE.SphereGeometry(0.5, 32, 32);
         var sphere = new THREE.Mesh(geometry, mat);
-        var sphereInitialPosition = new THREE.Vector3(0, 0, -2);
-        sphere.position.copy(sphereInitialPosition);
+        sphere.position.set(0, 0, 0);
         scene.add(sphere);
 
-        // 球を移動させる
-        const sphereSpeed = 0.01; // 移動速度を設定
-        const sphereDirection = new THREE.Vector3(0, 0, 1); // 移動方向を設定
-
         // 円柱を作成
-        const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
-        const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-        const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-        cylinder.position.set(0, 0, -5);
+        var cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+        var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+        var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        cylinder.position.set(0, 0, -2);
         scene.add(cylinder);
 
-        // 球と円柱の境界ボックスを取得
-        const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
-        const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
+        // 球の移動速度と方向を設定
+        const sphereSpeed = 0.05;
+        const sphereDirection = new THREE.Vector3(0, 0, 1);
 
         update();
 
@@ -86,34 +77,17 @@
           renderer.render(scene, camera);
           requestAnimationFrame(update);
 
-          // 球を移動
+          // 球を回転させる
+          sphere.rotation.x += 0.01;
+          sphere.rotation.y += 0.01;
+
+          // 球を移動させる
           sphere.position.add(sphereDirection.clone().multiplyScalar(sphereSpeed));
 
-          // 球の移動方向
-          sphereDirection.copy(sphere.position).normalize();
-
-          // 球と円柱の当たり判定
-            if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
-            // 当たった場合、球の移動方向を反射させる
-            const normal = new THREE.Vector3();
-            const contactPoint = new THREE.Vector3();
-            cylinderBoundingBox.clampPoint(sphere.position, contactPoint);
-            normal.subVectors(contactPoint, sphere.position).normalize();
-
-            // 球の速度ベクトルを法線ベクトルに射影
-            const velocityProjection = sphereDirection.dot(normal);
-            const velocityComponent = new THREE.Vector3().copy(normal).multiplyScalar(velocityProjection);
-
-            // 反射ベクトルを計算
-            const reflection = new THREE.Vector3().copy(sphereDirection).sub(velocityComponent.multiplyScalar(2));
-
-            // 球の移動方向を反射ベクトルに設定
-            sphereDirection.copy(reflection);
-
-            // 球を円柱の外部に移動させる
-            const penetrationDistance = cylinderBoundingBox.distanceToPoint(sphere.position) + (sphereBoundingBox.max.z - sphereBoundingBox.min.z) * 0.5 + (cylinderBoundingBox.max.z - cylinderBoundingBox.min.z) * 0.5;
-            sphere.position.add(sphereDirection.multiplyScalar(penetrationDistance));
-}
+          // 球が円柱の手前の座標に到達したら逆方向に進む
+          if (sphere.position.z >= cylinder.position.z) {
+            sphereDirection.z *= -1; // 球の移動方向を逆にする
+          }
         }
       }
     </script>
