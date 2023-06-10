@@ -67,9 +67,18 @@
             sphere.position.set(-1, 0, 0);
             scene.add(sphere);
 
+            // テクスチャー読み込み
+            var textureLoader2 = new THREE.TextureLoader();
+            var texture2 = textureLoader2.load('wood.jpg');
+            var mat2 = new THREE.MeshPhongMaterial({ map: texture2 });
+
+            // バンプマップ読み込み
+            var bump = textureLoader2.load('wood_bump.png');
+            mat2.bumpMap = bump;
+            mat2.bumpscale = 0.05;
+
             // 円柱を作成
             var cylinderGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 32);
-            var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
             var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
             cylinder.position.set(1, 0, 0);
             scene.add(cylinder);
