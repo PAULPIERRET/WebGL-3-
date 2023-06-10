@@ -25,21 +25,31 @@
       var cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
       var cubeBody = new CANNON.Body({ mass: 1 });
       cubeBody.addShape(cubeShape);
+      cubeBody.position.y = 10; // キューブの初期位置を上に設定
       world.addBody(cubeBody);
 
       var groundShape = new CANNON.Plane();
       var groundBody = new CANNON.Body({ mass: 0 });
       groundBody.addShape(groundShape);
+      groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2); // 地面を水平に配置
       world.addBody(groundBody);
+
+      var timeStep = 1 / 60; // シミュレーションのタイムステップ
 
       function animate() {
         requestAnimationFrame(animate);
+
         // 物理エンジンのシミュレーションを実行
-        world.step(1 / 60);
+        world.step(timeStep);
 
         // Three.jsのオブジェクトを物理エンジンの位置に合わせる
         cubeMesh.position.copy(cubeBody.position);
         cubeMesh.quaternion.copy(cubeBody.quaternion);
+
+        // カメラの位置をキューブに追従
+        camera.position.copy(cubeBody.position);
+        camera.position.z += 5; // キューブから少し離れた位置にカメラを配置
+        camera.lookAt(cubeMesh.position);
 
         renderer.render(scene, camera);
       }
