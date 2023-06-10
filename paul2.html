@@ -65,6 +65,9 @@
         cylinder.position.set(0, 0, -2);
         scene.add(cylinder);
 
+        // 球の移動方向を示すベクトル
+        var sphereDirection = new THREE.Vector3(0, 0, 1);
+
         update();
 
         // 毎フレーム時に実行されるループイベントです
@@ -78,11 +81,11 @@
           sphere.rotation.y += 0.01;
 
           // 球を移動させる
-          sphere.position.z -=0.02;
+          sphere.position.add(sphereDirection.clone().multiplyScalar(0.02));
 
           // 球が円柱の手前の座標に到達したら逆方向に進む
-          if (sphere.position.z == cylinder.position.z) {
-            sphereDirection.z *= -10; // 球の移動方向を逆にする
+          if (sphere.position.z >= cylinder.position.z - 0.5) {
+            sphereDirection.z *= -1; // 球の移動方向を逆にする
           }
         }
       }
