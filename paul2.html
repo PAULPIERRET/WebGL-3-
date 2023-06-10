@@ -100,7 +100,11 @@
                 // 衝突判定
                 if (sphere.position.distanceTo(cylinder.position) < 0.5) {
                     // 衝突時の処理
-                    isColliding = true; // 衝突フラグを立てる
+                    if (!isColliding) {
+                        // 初めて衝突した場合のみ処理を実行
+                        isColliding = true; // 衝突フラグを立てる
+                        // その他の処理...
+                    }
                 } else {
                     isColliding = false; // 衝突フラグをリセットする
                 }
