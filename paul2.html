@@ -70,9 +70,8 @@
         cylinder.position.set(0, 0, -5);
         scene.add(cylinder);
 
-        // 球の移動速度を設定
-        var sphereSpeed = 0.02;
-        var sphereDirection = new THREE.Vector3(1, 1, 1).normalize().multiplyScalar(sphereSpeed);
+        // 球の移動方向
+        var sphereDirection = new THREE.Vector3(0, 0, -1);
 
         // 円柱の当たり判定用のBox3オブジェクトを作成
         const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
@@ -86,7 +85,7 @@
           requestAnimationFrame(update);
 
           // 球を移動させる
-          sphere.position.add(sphereDirection);
+          sphere.position.z -= 0.01;
 
           // 球と円柱の当たり判定
           const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
