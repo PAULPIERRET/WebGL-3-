@@ -74,6 +74,10 @@
         cylinder.position.set(0, 0, -5);
         scene.add(cylinder);
 
+        // 球と円柱の境界ボックスを取得
+        const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
+        const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
+
         update();
 
         // 毎フレーム時に実行されるループイベントです
