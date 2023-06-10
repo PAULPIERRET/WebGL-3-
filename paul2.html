@@ -1,17 +1,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <script src="https://cdn.rawgit.com/mrdoob/three.js/r130/build/three.js"></script>
-    <script src="https://cdn.rawgit.com/schteppe/cannon.js/v0.6.2/build/cannon.js"></script>
+    <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
   </head>
-  <body>
-    <script>
+<body>
+ <script>
       // ページの読み込みを待つ
       window.addEventListener('DOMContentLoaded', init);
 
       function init() {
         // サイズを指定
-        const width = 800;
+        const width = 800
         const height = 600;
 
         // レンダラーを作成
@@ -47,55 +47,36 @@
         const axisHelper = new THREE.AxisHelper(2); //軸の長さ　X：赤、Y：緑、z：青
         scene.add(axisHelper);
 
-        var world = new CANNON.World();
-        world.gravity.set(0, -9.8, 0); // 重力の設定
+        // テクスチャー読み込み
+        var textureLoader = new THREE.TextureLoader();  
+        var texture = textureLoader.load("baseball1.png");
+        var mat = new THREE.MeshPhongMaterial({ map: texture });
 
-        var cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-        var cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        var cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        scene.add(cubeMesh);
+        // バンプマップ読み込み
+        var bump = textureLoader.load("baseball1_bump.png");
+        mat.bumpMap = bump;
+        mat.bumpscale = 0.05;
 
-        var cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
-        var cubeBody = new CANNON.Body({ mass: 1 });
-        cubeBody.addShape(cubeShape);
-        cubeBody.position.y = 10; // キューブの初期位置を上に設定
-        world.addBody(cubeBody);
+        // 球を作成
+        var geometry = new THREE.SphereGeometry(0.5, 32, 32 );
+        var sphere = new THREE.Mesh(geometry, mat);
+        sphere.position.set(0, 0, 0);
+        scene.add(sphere);
 
-        var groundShape = new CANNON.Plane();
-        var groundBody = new CANNON.Body({ mass: 0 });
-        groundBody.addShape(groundShape);
-        groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2); // 地面を水平に配置
-        world.addBody(groundBody);
+        update();
 
-        var timeStep = 1 / 60; // シミュレーションのタイムステップ
-
-        // 衝突イベントのリスナーを登録
-        world.addEventListener('collide', function(event) {
-          var contact = event.contact;
-          var contactNormal = new THREE.Vector3(contact.normal.x, contact.normal.y, contact.normal.z);
-
-          // 反射ベクトルの計算
-          var reflection = new THREE.Vector3().reflect(contactNormal);
-
-          // キューブの速度ベクトルを反射ベクトルに設定
-          cubeBody.velocity.set(reflection.x, reflection.y, reflection.z);
-        });
-
-        function animate() {
-          requestAnimationFrame(animate);
-
-          // 物理エンジンのシミュレーションを実行
-          world.step(timeStep);
-
-          // Three.jsのオブジェクトを物理エンジンの位置に合わせる
-          cubeMesh.position.copy(cubeBody.position);
-          cubeMesh.quaternion.copy(cubeBody.quaternion);
-
+        // 毎フレーム時に実行されるループイベントです
+        function update() {
+          // レンダリング
           renderer.render(scene, camera);
-        }
+          requestAnimationFrame(update);
 
-        animate();
+          // 球を回転させる
+          sphere.rotation.x += 0.01;
+          sphere.rotation.y += 0.01;
+        }
+     
       }
-    </script>
-  </body>
+  </script>
+</body>
 </html>
