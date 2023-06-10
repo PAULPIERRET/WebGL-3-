@@ -1,50 +1,50 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.rawgit.com/schteppe/cannon.js/v0.6.2/build/cannon.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/r130/build/three.js"></script>
+    <script src="https://cdn.rawgit.com/schteppe/cannon.js/v0.6.2/build/cannon.js"></script>
   </head>
   <body>
     <script>
-        var scene = new THREE.Scene();
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+      var scene = new THREE.Scene();
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
 
-        var world = new CANNON.World();
-        world.gravity.set(0, -9.8, 0); // 重力の設定
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 5;
 
-        var cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-        var cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        var cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        scene.add(cubeMesh);
-        
-        var cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
-        var cubeBody = new CANNON.Body({ mass: 1 });
-        cubeBody.addShape(cubeShape);
-        world.addBody(cubeBody);
+      var world = new CANNON.World();
+      world.gravity.set(0, -9.8, 0); // 重力の設定
 
-        var groundShape = new CANNON.Plane();
-        var groundBody = new CANNON.Body({ mass: 0 });
-        groundBody.addShape(groundShape);
-        world.addBody(groundBody);
+      var cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+      var cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      var cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      scene.add(cubeMesh);
 
-        function animate() {
-            requestAnimationFrame(animate);
-             // 物理エンジンのシミュレーションを実行
-             world.step(1 / 60);
+      var cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+      var cubeBody = new CANNON.Body({ mass: 1 });
+      cubeBody.addShape(cubeShape);
+      world.addBody(cubeBody);
 
-             // Three.jsのオブジェクトを物理エンジンの位置に合わせる
-             cubeMesh.position.copy(cubeBody.position);
-             cubeMesh.quaternion.copy(cubeBody.quaternion);
+      var groundShape = new CANNON.Plane();
+      var groundBody = new CANNON.Body({ mass: 0 });
+      groundBody.addShape(groundShape);
+      world.addBody(groundBody);
 
-             renderer.render(scene, camera);
-        }
+      function animate() {
+        requestAnimationFrame(animate);
+        // 物理エンジンのシミュレーションを実行
+        world.step(1 / 60);
 
-        animate();
+        // Three.jsのオブジェクトを物理エンジンの位置に合わせる
+        cubeMesh.position.copy(cubeBody.position);
+        cubeMesh.quaternion.copy(cubeBody.quaternion);
 
+        renderer.render(scene, camera);
+      }
+
+      animate();
     </script>
   </body>
 </html>
