@@ -63,6 +63,11 @@
         sphere.position.copy(sphereInitialPosition);
         scene.add(sphere);
 
+        // 球を移動させる
+        const sphereSpeed = 0.01; // 移動速度を設定
+        const sphereDirection = new THREE.Vector3(0, 0, -1); // 移動方向を設定
+
+
         // 円柱を作成
         const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
         const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
@@ -78,12 +83,12 @@
           renderer.render(scene, camera);
           requestAnimationFrame(update);
 
-          // 球を移動させる
+          // 球を移動
           sphere.position.add(sphereDirection.clone().multiplyScalar(sphereSpeed));
 
           // 球の移動方向
           const sphereDirection = sphere.position.clone().normalize();
-
+          
           // 球と円柱の当たり判定
           const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
           const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
