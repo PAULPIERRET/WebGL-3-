@@ -91,7 +91,7 @@
                     // 衝突前の移動
                     sphere.position.x += 0.01;
                 } else {
-                    // 衝突後の移動
+                    // 衝突後の移動（isCollidingが常にtrue）
                     sphere.position.x -= 0.01; // X軸負方向への移動
                     sphere.position.y -= 0.01; // Y軸負方向への移動
                 }
@@ -100,8 +100,6 @@
                 if (sphere.position.distanceTo(cylinder.position) < 0.5) {
                     // 衝突時の処理
                     isColliding = true; // 衝突フラグを立てる
-                } else {
-                    isColliding = false; // 衝突フラグをリセットする
                 }
             }
         }
