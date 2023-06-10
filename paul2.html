@@ -3,105 +3,48 @@
     <meta charset="utf-8" />
     <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.rawgit.com/schteppe/cannon.js/v0.6.2/build/cannon.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/r130/build/three.js"></script>
   </head>
   <body>
     <script>
-      // ページの読み込みを待つ
-      window.addEventListener('DOMContentLoaded', init);
-
-      function init() {
-        // サイズを指定
-        const width = 800;
-        const height = 600;
-
-        // レンダラーを作成
+        var scene = new THREE.Scene();
         var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-        renderer.setSize(width, height);
 
-        // シーンを作成
-        const scene = new THREE.Scene();
+        var world = new CANNON.World();
+        world.gravity.set(0, -9.8, 0); // 重力の設定
 
-        // カメラを作成
-        const camera = new THREE.PerspectiveCamera(45, width / height);
-        // カメラの初期座標を設定
-        camera.position.set(0, 0, 5);
+        var cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+        var cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        scene.add(cubeMesh);
+        
+        var cubeShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5));
+        var cubeBody = new CANNON.Body({ mass: 1 });
+        cubeBody.addShape(cubeShape);
+        world.addBody(cubeBody);
 
-        // カメラコントローラーを作成
-        const controls = new THREE.OrbitControls(camera, document.body);
+        var groundShape = new CANNON.Plane();
+        var groundBody = new CANNON.Body({ mass: 0 });
+        groundBody.addShape(groundShape);
+        world.addBody(groundBody);
 
-        // 平行光源1
-        var directionalLight1 = new THREE.DirectionalLight(0xffffff);
-        directionalLight1.position.set(10, 10, 10);
-        // シーンに追加
-        scene.add(directionalLight1);
-        // 平行光源2
-        var directionalLight2 = new THREE.DirectionalLight(0x888888);
-        directionalLight2.position.set(-10, -10, 10);
-        // シーンに追加
-        scene.add(directionalLight2);
+        function animate() {
+            requestAnimationFrame(animate);
+             // 物理エンジンのシミュレーションを実行
+             world.step(1 / 60);
 
-        // helper
-        const gridHelper = new THREE.GridHelper(2, 10); // size, step
-        scene.add(gridHelper);
-        const axisHelper = new THREE.AxisHelper(2); //軸の長さ　X：赤、Y：緑、z：青
-        scene.add(axisHelper);
+             // Three.jsのオブジェクトを物理エンジンの位置に合わせる
+             cubeMesh.position.copy(cubeBody.position);
+             cubeMesh.quaternion.copy(cubeBody.quaternion);
 
-        // テクスチャー読み込み
-        var textureLoader = new THREE.TextureLoader();
-        var texture = textureLoader.load("baseball1.png");
-        var mat = new THREE.MeshPhongMaterial({ map: texture });
-
-        // 球を作成
-        var geometry = new THREE.SphereGeometry(0.5, 32, 32);
-        var sphere = new THREE.Mesh(geometry, mat);
-        scene.add(sphere);
-
-        // 円柱を作成
-        var cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
-        var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-        var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-        cylinder.position.set(0, 0, -2);
-        scene.add(cylinder);
-
-        // 球の移動方向を示すベクトル
-        var sphereDirection = new THREE.Vector3(0, 0, 1);
-
-        update();
-
-        // 毎フレーム時に実行されるループイベントです
-        function update() {
-          // レンダリング
-          renderer.render(scene, camera);
-          requestAnimationFrame(update);
-
-          // 球を回転させる
-          sphere.rotation.x += 0.01;
-          sphere.rotation.y += 0.01;
-
-          // 球を移動させる
-          sphere.position.add(sphereDirection.clone().multiplyScalar(0.02));
-
-          // 衝突判定と反射処理
-          detectCollision();
+             renderer.render(scene, camera);
         }
 
-        // 衝突判定と反射処理
-        function detectCollision() {
-          // 球の中心座標と半径を取得
-          var sphereCenter = sphere.position.clone();
-          var sphereRadius = sphere.geometry.parameters.radius;
+        animate();
 
-          // 円柱の上面と球の下面との距離を計算
-          var distance = cylinder.position.z - (sphereCenter.z - sphereRadius);
-
-          if (distance <= 0) {
-            // 衝突した場合の処理
-            sphereDirection.z *= -1; // 球の移動方向を逆にする
-          }
-        }
-        console.log(distance); // コンソールに衝突判定の距離を表示
-      }
     </script>
   </body>
 </html>
