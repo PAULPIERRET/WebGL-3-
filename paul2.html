@@ -88,7 +88,7 @@
           // 衝突判定
           if (sphere.position.distanceTo(cylinder.position) < 0.5) {
             // 衝突時の処理
-            sphere.position.x += 0.02; // 後ろへの移動
+            sphere.position.x -= 0.5; // 後ろへの移動
             sphere.position.y += 0.01; // 上への移動
           }
         }
