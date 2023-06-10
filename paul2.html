@@ -75,9 +75,17 @@
             update();
 
             // 衝突判定
-            var isColliding = false; // 衝突フラグを追加
-            for (var i = 0; i < 4; i++) {
-                sphere.position.x += 0.1; // X軸負方向への移動
+            function checkCollision() {
+                if (sphere.position.distanceTo(cylinder.position) < 0.5) {
+                    // 衝突時の処理
+                    if (!isColliding) {
+                        // 初めて衝突した場合のみ処理を実行
+                        isColliding = true; // 衝突フラグを立てる
+                        // その他の処理...
+                    }
+                } else {
+                    isColliding = false; // 衝突フラグをリセットする
+                }
             }
 
             // 毎フレーム時に実行されるループイベントです
