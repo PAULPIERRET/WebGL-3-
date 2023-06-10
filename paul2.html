@@ -72,6 +72,9 @@
 
         update();
 
+        // 衝突判定
+        var isColliding = false; // 衝突フラグを追加
+        
         // 毎フレーム時に実行されるループイベントです
         function update() {
           // レンダリング
@@ -83,14 +86,22 @@
           sphere.rotation.y += 0.01;
 
           // 球の移動
-          sphere.position.x += 0.01;
+            if (!isColliding) {
+                // 衝突前の移動
+                sphere.position.x += 0.01;
+            } else {
+                // 衝突後の移動
+                sphere.position.x -= 0.02; // 後ろへの移動
+                sphere.position.y -= 0.01; // 下への移動
+            }
 
           // 衝突判定
-          if (sphere.position.distanceTo(cylinder.position) < 0.5) {
-            // 衝突時の処理
-            sphere.position.x -= 0.5; // 後ろへの移動
-            sphere.position.y += 0.01; // 上への移動
-          }
+            if (sphere.position.distanceTo(cylinder.position) < 0.5) {
+                // 衝突時の処理
+                isColliding = true; // 衝突フラグを立てる
+            } else {
+                isColliding = false; // 衝突フラグをリセットする
+            }
         }
       }
     </script>
