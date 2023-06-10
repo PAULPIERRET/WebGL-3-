@@ -1,109 +1,112 @@
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
-  </head>
-  <body>
+</head>
+
+<body>
     <script>
-      // ページの読み込みを待つ
-      window.addEventListener('DOMContentLoaded', init);
+        // ページの読み込みを待つ
+        window.addEventListener('DOMContentLoaded', init);
 
-      function init() {
-        // サイズを指定
-        const width = 800;
-        const height = 600;
+        function init() {
+            // サイズを指定
+            const width = 800;
+            const height = 600;
 
-        // レンダラーを作成
-        var renderer = new THREE.WebGLRenderer();
-        document.body.appendChild(renderer.domElement);
-        renderer.setSize(width, height);
+            // レンダラーを作成
+            var renderer = new THREE.WebGLRenderer();
+            document.body.appendChild(renderer.domElement);
+            renderer.setSize(width, height);
 
-        // シーンを作成
-        const scene = new THREE.Scene();
+            // シーンを作成
+            const scene = new THREE.Scene();
 
-        // カメラを作成
-        const camera = new THREE.PerspectiveCamera(45, width / height);
-        // カメラの初期座標を設定
-        camera.position.set(0, 0, 5);
+            // カメラを作成
+            const camera = new THREE.PerspectiveCamera(45, width / height);
+            // カメラの初期座標を設定
+            camera.position.set(0, 0, 5);
 
-        // カメラコントローラーを作成
-        const controls = new THREE.OrbitControls(camera, document.body);
+            // カメラコントローラーを作成
+            const controls = new THREE.OrbitControls(camera, document.body);
 
-        // 平行光源1
-        var directionalLight1 = new THREE.DirectionalLight(0xffffff);
-        directionalLight1.position.set(10, 10, 10);
-        // シーンに追加
-        scene.add(directionalLight1);
-        // 平行光源2
-        var directionalLight2 = new THREE.DirectionalLight(0x888888);
-        directionalLight2.position.set(-10, -10, 10);
-        // シーンに追加
-        scene.add(directionalLight2);
+            // 平行光源1
+            var directionalLight1 = new THREE.DirectionalLight(0xffffff);
+            directionalLight1.position.set(10, 10, 10);
+            // シーンに追加
+            scene.add(directionalLight1);
+            // 平行光源2
+            var directionalLight2 = new THREE.DirectionalLight(0x888888);
+            directionalLight2.position.set(-10, -10, 10);
+            // シーンに追加
+            scene.add(directionalLight2);
 
-        // helper
-        const gridHelper = new THREE.GridHelper(2, 10); // size, step
-        scene.add(gridHelper);
-        const axisHelper = new THREE.AxisHelper(2); //軸の長さ　X：赤、Y：緑、z：青
-        scene.add(axisHelper);
+            // helper
+            const gridHelper = new THREE.GridHelper(2, 10); // size, step
+            scene.add(gridHelper);
+            const axisHelper = new THREE.AxisHelper(2); //軸の長さ　X：赤、Y：緑、z：青
+            scene.add(axisHelper);
 
-        // テクスチャー読み込み
-        var textureLoader = new THREE.TextureLoader();
-        var texture = textureLoader.load('baseball1.png');
-        var mat = new THREE.MeshPhongMaterial({ map: texture });
+            // テクスチャー読み込み
+            var textureLoader = new THREE.TextureLoader();
+            var texture = textureLoader.load('baseball1.png');
+            var mat = new THREE.MeshPhongMaterial({ map: texture });
 
-        // バンプマップ読み込み
-        var bump = textureLoader.load('baseball1_bump.png');
-        mat.bumpMap = bump;
-        mat.bumpscale = 0.05;
+            // バンプマップ読み込み
+            var bump = textureLoader.load('baseball1_bump.png');
+            mat.bumpMap = bump;
+            mat.bumpscale = 0.05;
 
-        // 球を作成
-        var geometry = new THREE.SphereGeometry(0.25, 32, 32);
-        var sphere = new THREE.Mesh(geometry, mat);
-        sphere.position.set(-1, 0, 0);
-        scene.add(sphere);
+            // 球を作成
+            var geometry = new THREE.SphereGeometry(0.25, 32, 32);
+            var sphere = new THREE.Mesh(geometry, mat);
+            sphere.position.set(-1, 0, 0);
+            scene.add(sphere);
 
-        // 円柱を作成
-        var cylinderGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 32);
-        var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-        var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-        cylinder.position.set(1, 0, 0);
-        scene.add(cylinder);
+            // 円柱を作成
+            var cylinderGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 32);
+            var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+            var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+            cylinder.position.set(1, 0, 0);
+            scene.add(cylinder);
 
-        update();
+            update();
 
-        // 衝突判定
-        var isColliding = false; // 衝突フラグを追加
-        
-        // 毎フレーム時に実行されるループイベントです
-        function update() {
-          // レンダリング
-          renderer.render(scene, camera);
-          requestAnimationFrame(update);
+            // 衝突判定
+            var isColliding = false; // 衝突フラグを追加
 
-          // 球を回転させる
-          sphere.rotation.x += 0.01;
-          sphere.rotation.y += 0.01;
+            // 毎フレーム時に実行されるループイベントです
+            function update() {
+                // レンダリング
+                renderer.render(scene, camera);
+                requestAnimationFrame(update);
 
-          // 球の移動
-            if (!isColliding) {
-                // 衝突前の移動
-                sphere.position.x += 0.01;
-            } else {
-                // 衝突後の移動
-                sphere.position.x -= 0.02; // 後ろへの移動
-                sphere.position.y -= 0.01; // 下への移動
-            }
+                // 球を回転させる
+                sphere.rotation.x += 0.01;
+                sphere.rotation.y += 0.01;
 
-          // 衝突判定
-            if (sphere.position.distanceTo(cylinder.position) < 0.5) {
-                // 衝突時の処理
-                isColliding = true; // 衝突フラグを立てる
-            } else {
-                isColliding = false; // 衝突フラグをリセットする
+                // 球の移動
+                if (!isColliding) {
+                    // 衝突前の移動
+                    sphere.position.x += 0.01;
+                } else {
+                    // 衝突後の移動
+                    sphere.position.x -= 0.01; // X軸負方向への移動
+                    sphere.position.y += 0.01; // Y軸負方向への移動
+                }
+
+                // 衝突判定
+                if (sphere.position.distanceTo(cylinder.position) < 0.5) {
+                    // 衝突時の処理
+                    isColliding = true; // 衝突フラグを立てる
+                } else {
+                    isColliding = false; // 衝突フラグをリセットする
+                }
             }
         }
-      }
     </script>
-  </body>
+</body>
+
 </html>
