@@ -49,7 +49,7 @@
 
         // テクスチャー読み込み
         var textureLoader = new THREE.TextureLoader();  
-        var texture = textureLoader.load("野球ボール.png");
+        var texture = textureLoader.load("baseball1.png");
         var mat = new THREE.MeshPhongMaterial({ map: texture });
 
         // 球を作成
@@ -57,6 +57,15 @@
         var sphere = new THREE.Mesh(geometry, mat);
         sphere.position.set(0, 0, 0);
         scene.add(sphere);
+
+        // 円柱を作成
+        const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+        const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+        const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        scene.add(cylinder);
+
+        // 円柱の当たり判定用のBox3オブジェクトを作成
+        const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
 
         update();
 
@@ -69,6 +78,15 @@
           // 球を回転させる
           sphere.rotation.x += 0.01;
           sphere.rotation.y += 0.01;
+
+          // 球と円柱の当たり判定
+          const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
+          if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
+            // 当たった場合、球の移動方向を反転させる
+            sphere.position.x *= -1;
+            sphere.position.y *= -1;
+            sphere.position.z *= -1;
+          }
         }
      
       }
