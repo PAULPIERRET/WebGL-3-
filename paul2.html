@@ -11,6 +11,8 @@
         // ページの読み込みを待つ
         window.addEventListener('DOMContentLoaded', init);
 
+        var isColliding = false; // 衝突フラグをグローバルスコープで宣言
+
         function init() {
             // サイズを指定
             const width = 800;
@@ -71,9 +73,6 @@
             var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
             cylinder.position.set(1, 0, 0);
             scene.add(cylinder);
-
-            // 衝突判定
-            var isColliding = false; // 衝突フラグを追加
 
             update();
 
