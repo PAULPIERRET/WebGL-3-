@@ -81,18 +81,22 @@
         // 毎フレーム時に実行されるループイベントです
         function update() {
           // レンダリング
-          renderer.render(scene, camera);
-          requestAnimationFrame(update);
+            renderer.render(scene, camera);
+            requestAnimationFrame(update);
 
           // 球を移動させる
-          sphere.position.z -= 0.01;
+            sphere.position.z -= 0.01;
 
           // 球と円柱の当たり判定
-          const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
-          if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
+            const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
+            if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
             // 当たった場合、球の移動方向を反転させる
-            sphereDirection.negate();
-          }
+                sphereDirection.negate();
+
+         // 球を円柱の外部に移動させる
+                const penetrationDistance = sphereBoundingBox.distanceToPoint(cylinderBoundingBox.getCenter()) + sphereBoundingBox.max.z - cylinderBoundingBox.min.z;
+                sphere.position.z += penetrationDistance;
+            }
         }
       }
     </script>
