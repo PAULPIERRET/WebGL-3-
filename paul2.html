@@ -70,37 +70,35 @@
         cylinder.position.set(0, 0, -5);
         scene.add(cylinder);
 
-        // 球の移動方向
-        var sphereDirection = new THREE.Vector3(0, 0, -1);
-
-        // 円柱の当たり判定用のBox3オブジェクトを作成
-        const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
-
         update();
 
         // 毎フレーム時に実行されるループイベントです
         function update() {
           // レンダリング
-            renderer.render(scene, camera);
-            requestAnimationFrame(update);
+          renderer.render(scene, camera);
+          requestAnimationFrame(update);
 
           // 球を移動させる
-            sphere.position.z -= 0.01;
+          sphere.position.z -= 0.01;
+
+          // 球の移動方向
+          const sphereDirection = sphere.position.clone().normalize();
 
           // 球と円柱の当たり判定
-            const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
-            if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
-                // 当たった場合、球の移動方向を反射させる
-                const normal = new THREE.Vector3();
-                const contactPoint = new THREE.Vector3();
-                cylinderBoundingBox.clampPoint(sphere.position, contactPoint);
-                normal.subVectors(sphere.position, contactPoint).normalize();
-                sphereDirection.reflect(normal);
+          const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
+          const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
+          if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
+            // 当たった場合、球の移動方向を反射させる
+            const normal = new THREE.Vector3();
+            const contactPoint = new THREE.Vector3();
+            cylinderBoundingBox.clampPoint(sphere.position, contactPoint);
+            normal.subVectors(sphere.position, contactPoint).normalize();
+            sphereDirection.reflect(normal);
 
-                // 球を円柱の外部に移動させる
-                const penetrationDistance = sphereBoundingBox.distanceToPoint(cylinderBoundingBox.getCenter()) + sphereBoundingBox.max.z - cylinderBoundingBox.min.z;
-                sphere.position.z += penetrationDistance;
-            }
+            // 球を円柱の外部に移動させる
+            const penetrationDistance = sphereBoundingBox.distanceToPoint(cylinderBoundingBox.getCenter()) + sphereBoundingBox.max.z - cylinderBoundingBox.min.z;
+            sphere.position.add(sphereDirection.multiplyScalar(penetrationDistance));
+          }
         }
       }
     </script>
