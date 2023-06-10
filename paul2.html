@@ -79,7 +79,7 @@
           requestAnimationFrame(update);
 
           // 球を移動させる
-          sphere.position.z -= 0.01;
+          sphere.position.add(sphereDirection.clone().multiplyScalar(sphereSpeed));
 
           // 球の移動方向
           const sphereDirection = sphere.position.clone().normalize();
