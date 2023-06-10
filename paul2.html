@@ -98,21 +98,22 @@
             const normal = new THREE.Vector3();
             const contactPoint = new THREE.Vector3();
             cylinderBoundingBox.clampPoint(sphere.position, contactPoint);
-            normal.subVectors(sphere.position, contactPoint).normalize();
+            normal.subVectors(contactPoint, sphere.position).normalize();
 
-            // 法線ベクトルと速度ベクトルの内積を計算
-            const dotProduct = sphereDirection.dot(normal);
+            // 球の速度ベクトルを法線ベクトルに射影
+            const velocityProjection = sphereDirection.dot(normal);
+            const velocityComponent = new THREE.Vector3().copy(normal).multiplyScalar(velocityProjection);
 
             // 反射ベクトルを計算
-            const reflection = new THREE.Vector3().copy(normal).multiplyScalar(2 * dotProduct).sub(sphereDirection);
+            const reflection = new THREE.Vector3().copy(sphereDirection).sub(velocityComponent.multiplyScalar(2));
 
             // 球の移動方向を反射ベクトルに設定
             sphereDirection.copy(reflection);
 
             // 球を円柱の外部に移動させる
-            const penetrationDistance = sphereBoundingBox.distanceToPoint(cylinderBoundingBox.getCenter()) + (sphereBoundingBox.max.z - sphereBoundingBox.min.z) * 0.5 + (cylinderBoundingBox.max.z - cylinderBoundingBox.min.z) * 0.5;
+            const penetrationDistance = cylinderBoundingBox.distanceToPoint(sphere.position) + (sphereBoundingBox.max.z - sphereBoundingBox.min.z) * 0.5 + (cylinderBoundingBox.max.z - cylinderBoundingBox.min.z) * 0.5;
             sphere.position.add(sphereDirection.multiplyScalar(penetrationDistance));
-            }
+}
         }
       }
     </script>
