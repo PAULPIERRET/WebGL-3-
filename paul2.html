@@ -48,21 +48,20 @@
         scene.add(axisHelper);
 
         // テクスチャー読み込み
-        var textureLoader = new THREE.TextureLoader();  
-        var texture = textureLoader.load("baseball1.png");
-        var mat = new THREE.MeshPhongMaterial();
-        mat.map = texture;
-  
-        // バンプマップ読み込み
-        var bump = textureLoader.load("baseball1_bump.png");
-        mat.bumpMap = bump;
-        mat.bumpScale = 1.0;
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load("baseball1.png");
+        const bump = textureLoader.load("baseball1_bump.png");
 
         // 球を作成
         var geometry = new THREE.SphereGeometry(0.5, 32, 128 );
         var sphere = new THREE.Mesh(geometry, mat);
         sphere.position.set(0, 0, 0);
         scene.add(sphere);
+
+        const mat = new THREE.MeshPhongMaterial();
+        mat.map = texture;
+        mat.bumpMap = bump;
+        mat.bumpScale = 1.0;
 
         // 円柱を作成
         const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
@@ -86,7 +85,7 @@
            sphere.rotation.x += 0.01;
            sphere.rotation.y += 0.01;
 
-           sphere.position.z += 0.1;
+           sphere.position.z -= 0.1;
 
            // 球と円柱の当たり判定
           const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
