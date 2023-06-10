@@ -72,21 +72,10 @@
             cylinder.position.set(1, 0, 0);
             scene.add(cylinder);
 
-            update();
-
             // 衝突判定
-            function checkCollision() {
-                if (sphere.position.distanceTo(cylinder.position) < 0.5) {
-                    // 衝突時の処理
-                    if (!isColliding) {
-                        // 初めて衝突した場合のみ処理を実行
-                        isColliding = true; // 衝突フラグを立てる
-                        // その他の処理...
-                    }
-                } else {
-                    isColliding = false; // 衝突フラグをリセットする
-                }
-            }
+            var isColliding = false; // 衝突フラグを追加
+
+            update();
 
             // 毎フレーム時に実行されるループイベントです
             function update() {
@@ -99,23 +88,19 @@
                 sphere.rotation.y += 0.01;
 
                 // 球の移動
-                if (isColliding) {
+                if (!isColliding) {
                     // 衝突前の移動
-                    sphere.position.x -= 0.5; // X軸負方向への移動
-                    sphere.position.y += 0.01; // Y軸負方向への移動
+                    sphere.position.x += 0.01;
                 } else {
                     // 衝突後の移動
-
+                    sphere.position.x -= 0.01; // X軸負方向への移動
+                    sphere.position.y -= 0.01; // Y軸負方向への移動
                 }
 
                 // 衝突判定
                 if (sphere.position.distanceTo(cylinder.position) < 0.5) {
                     // 衝突時の処理
-                    if (!isColliding) {
-                        // 初めて衝突した場合のみ処理を実行
-                        isColliding = true; // 衝突フラグを立てる
-                        // その他の処理...
-                    }
+                    isColliding = true; // 衝突フラグを立てる
                 } else {
                     isColliding = false; // 衝突フラグをリセットする
                 }
