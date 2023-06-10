@@ -49,12 +49,12 @@
 
         // テクスチャー読み込み
         var textureLoader = new THREE.TextureLoader();  
-        var texture = textureLoader.load("野球ボール.png");
+        var texture = textureLoader.load("baseball1.png");
         var mat = new THREE.MeshPhongMaterial();
         mat.map = texture;
   
         // バンプマップ読み込み
-        var bump = textureLoader.load("野球ボール2.png");
+        var bump = textureLoader.load("baseball1_bump.png");
         mat.bumpMap = bump;
         mat.bumpScale = 1.0;
 
