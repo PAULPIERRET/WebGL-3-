@@ -84,7 +84,7 @@
           sphere.position.add(sphereDirection.clone().multiplyScalar(0.02));
 
           // 球が円柱の手前の座標に到達したら逆方向に進む
-          if (sphere.position.z <= cylinder.position.z + 0.5) {
+          if (sphere.position.z == cylinder.position.z) {
             sphereDirection.z *= -1; // 球の移動方向を逆にする
           }
         }
