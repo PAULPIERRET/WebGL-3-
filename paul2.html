@@ -89,9 +89,7 @@
           sphereDirection.copy(sphere.position).normalize();
 
           // 球と円柱の当たり判定
-          const sphereBoundingBox = new THREE.Box3().setFromObject(sphere);
-          const cylinderBoundingBox = new THREE.Box3().setFromObject(cylinder);
-          if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
+            if (cylinderBoundingBox.intersectsBox(sphereBoundingBox)) {
             // 当たった場合、球の移動方向を反射させる
             const normal = new THREE.Vector3();
             const contactPoint = new THREE.Vector3();
@@ -108,9 +106,9 @@
             sphereDirection.copy(reflection);
 
             // 球を円柱の外部に移動させる
-            const penetrationDistance = sphereBoundingBox.distanceToPoint(cylinderBoundingBox.getCenter()) + sphereBoundingBox.max.z - cylinderBoundingBox.min.z;
+            const penetrationDistance = sphereBoundingBox.distanceToPoint(cylinderBoundingBox.getCenter()) + (sphereBoundingBox.max.z - sphereBoundingBox.min.z) * 0.5 + (cylinderBoundingBox.max.z - cylinderBoundingBox.min.z) * 0.5;
             sphere.position.add(sphereDirection.multiplyScalar(penetrationDistance));
-          }
+            }
         }
       }
     </script>
