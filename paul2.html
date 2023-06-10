@@ -76,8 +76,9 @@
 
             // 衝突判定
             var isColliding = false; // 衝突フラグを追加
-            sphere.position.x -= 0.5; // X軸負方向への移動
-                    sphere.position.y += 1; // Y軸負方向への移動
+            for (var i = 0; i < 4; i++) {
+                sphere.position.x += 0.1; // X軸負方向への移動
+            }
 
             // 毎フレーム時に実行されるループイベントです
             function update() {
@@ -96,7 +97,7 @@
                     sphere.position.y += 0.01; // Y軸負方向への移動
                 } else {
                     // 衝突後の移動
-                   
+
                 }
 
                 // 衝突判定
