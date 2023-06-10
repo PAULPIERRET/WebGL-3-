@@ -4,14 +4,14 @@
     <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
     <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
   </head>
-<body>
- <script>
+  <body>
+    <script>
       // ページの読み込みを待つ
       window.addEventListener('DOMContentLoaded', init);
 
       function init() {
         // サイズを指定
-        const width = 800
+        const width = 800;
         const height = 600;
 
         // レンダラーを作成
@@ -28,8 +28,8 @@
         camera.position.set(0, 0, 5);
 
         // カメラコントローラーを作成
-        const controls = new THREE.OrbitControls(camera, document.body); 
-        
+        const controls = new THREE.OrbitControls(camera, document.body);
+
         // 平行光源1
         var directionalLight1 = new THREE.DirectionalLight(0xffffff);
         directionalLight1.position.set(10, 10, 10);
@@ -42,26 +42,33 @@
         scene.add(directionalLight2);
 
         // helper
-        const gridHelper = new THREE.GridHelper(2,10); // size, step
+        const gridHelper = new THREE.GridHelper(2, 10); // size, step
         scene.add(gridHelper);
         const axisHelper = new THREE.AxisHelper(2); //軸の長さ　X：赤、Y：緑、z：青
         scene.add(axisHelper);
 
         // テクスチャー読み込み
-        var textureLoader = new THREE.TextureLoader();  
-        var texture = textureLoader.load("baseball1.png");
+        var textureLoader = new THREE.TextureLoader();
+        var texture = textureLoader.load('baseball1.png');
         var mat = new THREE.MeshPhongMaterial({ map: texture });
 
         // バンプマップ読み込み
-        var bump = textureLoader.load("baseball1_bump.png");
+        var bump = textureLoader.load('baseball1_bump.png');
         mat.bumpMap = bump;
         mat.bumpscale = 0.05;
 
         // 球を作成
-        var geometry = new THREE.SphereGeometry(0.25, 32, 32 );
+        var geometry = new THREE.SphereGeometry(0.25, 32, 32);
         var sphere = new THREE.Mesh(geometry, mat);
-        sphere.position.set(0, 0, 0);
+        sphere.position.set(-1, 0, 0);
         scene.add(sphere);
+
+        // 円柱を作成
+        var cylinderGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 32);
+        var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+        var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        cylinder.position.set(1, 0, 0);
+        scene.add(cylinder);
 
         update();
 
@@ -74,9 +81,18 @@
           // 球を回転させる
           sphere.rotation.x += 0.01;
           sphere.rotation.y += 0.01;
+
+          // 球の移動
+          sphere.position.x += 0.01;
+
+          // 衝突判定
+          if (sphere.position.distanceTo(cylinder.position) < 0.5) {
+            // 衝突時の処理
+            sphere.position.x -= 0.02; // 後ろへの移動
+            sphere.position.y += 0.01; // 上への移動
+          }
         }
-     
       }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
