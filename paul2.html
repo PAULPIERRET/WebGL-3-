@@ -68,6 +68,21 @@
         // 球の移動方向を示すベクトル
         var sphereDirection = new THREE.Vector3(0, 0, 1);
 
+        // 衝突判定と反射処理
+        function detectCollision() {
+          // 球の中心座標と半径を取得
+          var sphereCenter = sphere.position.clone();
+          var sphereRadius = sphere.geometry.parameters.radius;
+
+          // 円柱の上面と球の下面との距離を計算
+          var distance = sphereCenter.distanceTo(cylinder.position) - sphereRadius - (cylinder.geometry.parameters.height / 2);
+
+          if (distance <= 0) {
+            // 衝突した場合の処理
+            sphereDirection.z *= -1; // 球の移動方向を逆にする
+          }
+        }
+
         update();
 
         // 毎フレーム時に実行されるループイベントです
@@ -83,10 +98,8 @@
           // 球を移動させる
           sphere.position.add(sphereDirection.clone().multiplyScalar(0.02));
 
-          // 球が円柱の手前の座標に到達したら逆方向に進む
-          if (sphere.position.z == cylinder.position.z) {
-            sphereDirection.z *= -1; // 球の移動方向を逆にする
-          }
+          // 衝突判定と反射処理
+          detectCollision();
         }
       }
     </script>
